@@ -1,0 +1,29 @@
+{
+  "name": "undergen",
+  "version": "0.0.1",
+  "description": "Workspace code generator using JSON configurations and underscore templating.",
+  "scripts": {
+    "test": "mocha ./test/*Test.ts --require ts-node/register",
+    "build": "tsc",
+    "test:watch": "nodemon -e ts,ejs -w src -w test -x \"npm run test --silent\"",
+    "test-0": "ts-node ./src/test.ts",
+    "test-0:watch": "nodemon -e ts,ejs -w src -w test -x \"npm run test-0 --silent\""
+  },
+  "author": "Cole Lawrence",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/lodash": "^4.14.41",
+    "@types/mocha": "^2.2.32",
+    "@types/node": "^6.0.46",
+    "mocha": "^3.1.2",
+    "nodemon": "^1.11.0",
+    "ts-node": "^1.6.1",
+    "typescript": "^2.1.0-dev.20161105"
+  },
+  "dependencies": {
+    "fs-walk": "0.0.1",
+    "lodash": "^4.17.2",
+    "mkdirp": "^0.5.1",
+    "typescript-collections": "^1.2.3"
+  }
+}
