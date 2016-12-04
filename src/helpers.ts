@@ -58,6 +58,14 @@ function readTemplateConfig(cwd: string, config: M.UndergenConfig, templateName:
 
   template_config.filesDir = fullTemplateFilesPath
 
+	if (template_config.variables == null) {
+	  template_config.variables = []
+  }
+
+	if (template_config.onComplete == null) {
+	  template_config.onComplete = (noop => noop)
+  }
+
   return template_config
 }
 

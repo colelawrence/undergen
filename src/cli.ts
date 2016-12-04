@@ -11,6 +11,6 @@ const [cmd, ...args] = parsedArgs._
 
 parsedArgs._ = args
 switch (cmd) {
-  case "gen": GenCommand(parsedArgs); break
+  case "gen": GenCommand(parsedArgs).catch((error) => console.error(error)); break
   default: console.error("Unknown command, " + cmd)
 }
