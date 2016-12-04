@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { Args } from './cli/args.interface'
 
 import { GenCommand } from './cli/commands'

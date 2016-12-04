@@ -1,6 +1,6 @@
 {
   "name": "undergen",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Workspace code generator using JSON configurations and underscore templating.",
   "scripts": {
     "test": "mocha ./test/*Test.ts --require ts-node/register",
@@ -12,7 +12,7 @@
     "test-cli": "ts-node ./src/cli.ts gen --cwd ./test/cases/workspace-1 component jkArr:\"good day!\",h\\\\,j componentName:howdy inputArr:hello,goodbye,\"yes please\"",
     "test-cli:watch": "nodemon -e ts,ejs -w src -x \"npm run test-cli --silent\""
   },
-  "bin": { "under": "./out/cli.js" },
+  "bin": { "under": "./dist/cli.js" },
   "author": "Cole Lawrence",
   "license": "ISC",
   "devDependencies": {
