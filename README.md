@@ -23,5 +23,5 @@ Todo:
  - [ ] CLI interface created based on compiled templates
     - Looking into [inquirer](https://github.com/SBoudrias/Inquirer.js) and [inquirer directory](https://github.com/nicksrandall/inquirer-directory)
  - [ ] :art: Validation error reporting.
- - [ ] :white_checkmark: General Testing (also good for documentation).
+ - [ ] :white_check_mark: General Testing (also good for documentation).
  - [ ] :memo: Documentation.
