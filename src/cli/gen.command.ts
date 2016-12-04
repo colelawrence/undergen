@@ -98,20 +98,20 @@ async function GenCommand(args: Args) {
   	.filter(fp => fs.existsSync(fp))
   
   if (filesToReplace.length > 0) {
-		console.log(chalk.bold.red("The following files will be overwritten:"))
+		console.log(chalk.bold.red("The following files will be overwritten: 😱"))
     console.log(filesToReplace.map(fp => ` ${chalk.bold('*')} ${chalk.yellow(fp)}`).join('\n'))
     const {confirm_overwrite} = await inquirer.prompt({
       name: 'confirm_overwrite',
-      message: `Confirm overwrite of listed ${filesToReplace.length} files?`,
+      message: `Confirm overwrite of listed ${filesToReplace.length} files? 🤔`,
       type: 'confirm',
     })
 
-    if (!confirm_overwrite) return console.log(chalk.bold('Generation cancelled'))
+    if (!confirm_overwrite) return console.log(chalk.bold('Generation cancelled 😅'))
   }
 
   WriteTemplate(rendered)
 
-	console.log(chalk.bold(chalk.green(`Generated ${filePathsToWrite.length} files:`)))
+	console.log(chalk.bold(chalk.green(`Generated ${filePathsToWrite.length} files 😎`)))
 	console.log(
     filePathsToWrite
       .map(fp => ' * ' + path.relative(cwd, fp))
