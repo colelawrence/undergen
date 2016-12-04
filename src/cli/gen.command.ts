@@ -21,7 +21,7 @@ inquirer.registerPrompt('directory', require('inquirer-directory'));
 export
 async function GenCommand(args: Args) {
   // Current working directory
-  const cwd = path.resolve(args.cwd || process.cwd)
+  const cwd = path.resolve(args.cwd || process.cwd())
 
 	const DEBUG = !!args.debug
 
