@@ -7,12 +7,17 @@
     "build": "tsc",
     "test:watch": "nodemon -e ts,ejs -w src -w test -x \"npm run test --silent\"",
     "test-0": "ts-node ./src/test.ts",
-    "test-0:watch": "nodemon -e ts,ejs -w src -w test -x \"npm run test-0 --silent\""
+    "test-0:watch": "nodemon -e ts,ejs -w src -x \"npm run test-0 --silent\"",
+    "test-cli": "ts-node ./src/cli.ts gen --cwd ./test/cases/workspace-1 component jkArr:\"good day!\",h\\\\,j componentName:howdy inputArr:hello,goodbye,\"yes please\"",
+    "test-cli:watch": "nodemon -e ts,ejs -w src -x \"npm run test-cli --silent\""
   },
   "author": "Cole Lawrence",
   "license": "ISC",
   "devDependencies": {
+    "@types/chalk": "^0.4.31",
+    "@types/inquirer": "0.0.32",
     "@types/lodash": "^4.14.41",
+    "@types/minimist": "^1.1.29",
     "@types/mocha": "^2.2.32",
     "@types/node": "^6.0.46",
     "mocha": "^3.1.2",
@@ -21,8 +26,12 @@
     "typescript": "^2.1.0-dev.20161105"
   },
   "dependencies": {
+    "chalk": "^1.1.3",
     "fs-walk": "0.0.1",
+    "inquirer": "^1.2.3",
+    "inquirer-directory": "^2.1.0",
     "lodash": "^4.17.2",
+    "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",
     "typescript-collections": "^1.2.3"
   }

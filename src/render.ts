@@ -19,7 +19,6 @@ function RenderTemplate (template: M.Template, vars: any, options = {}): M.FileT
 }
 
 function renderFile (file: M.FileTemplate, vars: {[identifier: string]: any}): M.FileToWrite {
-	console.log("vars", vars)
   return <M.FileToWrite> {
     basepath: file.basepath.replace(PATH_RE, (_match, id) => vars[id] ),
     filename: file.filename.replace(PATH_RE, (_match, id) => vars[id] ),

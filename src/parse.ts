@@ -1,5 +1,6 @@
 
 import * as M from './models'
+import * as helpers from './helpers'
 
 import { walkSync } from './utils/walk-sync'
 import fs = require('fs')
@@ -67,12 +68,7 @@ function ParseTemplate(cwd: string, templateName: string): M.Template {
 
 	// Get path variables
 	const templateVars: M.TemplateVariable[] = templateVarIdsSet.toArray()
-  	.map(a => {
-      if (/dir$/i.test(a)) return <M.TemplateVariable> { identifier: a, vartype: M.VariableType.directory }
-      else if (/arr$/i.test(a)) return <M.TemplateVariable> { identifier: a, vartype: M.VariableType.array }
-      else if (/num$|count$/i.test(a)) return <M.TemplateVariable> { identifier: a, vartype: M.VariableType.number }
-      else return <M.TemplateVariable> { identifier: a, vartype: M.VariableType.string }
-    })
+  	.map(helpers.createTemplateVariableFromIdentifier)
 
   return <M.Template> {
 		vars: templateVars,
