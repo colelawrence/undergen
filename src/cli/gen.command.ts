@@ -36,12 +36,8 @@ async function GenCommand(args: Args) {
 	debug("GENERATE Template:", templateName)
 
 	const vars_from_cli = templateVarArgs
-  	.map(arg => arg.split(/:/))
-    .map(([id, value]) => ({
-      templateVar: helpers.createTemplateVariableFromIdentifier(id),
-      value
-    }))
-    .map(helpers.parseValueForTemplateVar({cwd}))
+  	// map into {key, value} pairs acknowledging identifier suffix
+    .map(helpers.createKeyValuePairsFromArgument({cwd}))
 
 	debug("GENERATE Vars:", vars_from_cli)
 
@@ -73,21 +69,22 @@ async function GenCommand(args: Args) {
   
   const VAR_RE = /^templateVar:(.+)$/
 
+  // convert in vars from answers into {key, value} pairs
+	const vars_from_answers = Object.keys(answers)
+  	// take only templateVars
+  	.filter(k => VAR_RE.test(k))
+    .map(key => VAR_RE.exec(key))
+    .map(([match, identifier]) => `${identifier}:${answers[match]}`)		
+  	// map into {key, value} pairs acknowledging identifier suffix
+    .map(helpers.createKeyValuePairsFromArgument({cwd}))
+
 	// Store the variables we will actually use to pass into our renderer
   const complete_vars = {}
 
-	// enter in vars from cli
+	// enter in vars from cli and answers
 	vars_from_cli
+  	.concat(vars_from_answers)
   	.forEach(({key, value}) => complete_vars[key] = value)
-
-  // enter in vars from answers
-	Object.keys(answers)
-  	// take only templateVars that are directories
-  	.filter(k => VAR_RE.test(k))
-    .map(key => VAR_RE.exec(key))
-    .forEach(([match, identifier]) => {
-      complete_vars[identifier] = answers[match]
-    })
   
   debug("Rendering Template!")
 	

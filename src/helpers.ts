@@ -124,3 +124,26 @@ function createQuestionFromTemplateVar(opts: {cwd: string}) {
     return res
   }
 }
+
+export
+/**
+ * This function generates a function for parsing an argument formatted string ("identifier:value")
+ * So, example:
+ * 		const fn = createKeyValuePairsFromArgument({cwd})
+ * 		fn(`f:1`) //=> {key: 'f', value: '1'}
+ * 		fn(`fCount:1`) //=> {key: 'fCount', value: 1}
+ * 		fn(`aArr:1`) //=> {key: 'aArr', value: ["1"]}
+ * 		fn(`aArr:a,b, c`) //=> {key: 'aArr', value: ["a", "b", " c"]}
+ * 		fn(`aDir:src`) //=> {key: 'aDir', value: path.resolve(cwd, "src")} // pretend the function is evaluated using the passed in cwd
+ *
+ * */
+function createKeyValuePairsFromArgument({cwd}) {
+  const valueFromTemplateVar = parseValueForTemplateVar({cwd})
+  return (arg) => {
+    const [id, value] = arg.split(/:/)
+    return valueFromTemplateVar({
+      templateVar: createTemplateVariableFromIdentifier(id),
+      value
+    })
+  }
+}
