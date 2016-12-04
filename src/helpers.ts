@@ -2,15 +2,64 @@
 import * as M from './models'
 
 export
-function createTemplateVariableFromIdentifier(a: string) {
-  if (/dir$/i.test(a)) return <M.TemplateVariable> { identifier: a, vartype: M.VariableType.directory }
-  else if (/arr$/i.test(a)) return <M.TemplateVariable> { identifier: a, vartype: M.VariableType.array }
-  else if (/num$|count$/i.test(a)) return <M.TemplateVariable> { identifier: a, vartype: M.VariableType.number }
-  else return <M.TemplateVariable> { identifier: a, vartype: M.VariableType.string }
+function createTemplateVariableFromIdentifier(id: string): M.TemplateVariable {
+  // Crate types for the variables based on their matched suffix
+  if (/dir$/i.test(id))              return { identifier: id, vartype: M.VariableType.directory }
+  else if (/arr$/i.test(id))         return { identifier: id, vartype: M.VariableType.array }
+  else if (/num$|count$/i.test(id))  return { identifier: id, vartype: M.VariableType.number }
+  else                               return { identifier: id, vartype: M.VariableType.string }
 }
 
 import path = require('path')
 import fs = require('fs')
+
+export
+function readUndergenConfig(cwd): M.UndergenConfig {
+	const conffile: string = path.resolve(cwd, './.undergen.js')
+
+  // Require undergen conf file
+  const config: M.UndergenConfig = require(conffile)
+
+  // Ensure templates directory
+  if (!config.templatesDir) {
+		console.warn("Templates directory not specified, defaulting to `./templates`")
+    config.templatesDir = './templates'
+  }
+
+  // Assert templates directory exists
+	const testTemplatesPath = path.resolve(cwd, config.templatesDir)
+  if (!fs.existsSync(testTemplatesPath)) {
+    throw `Templates directory not found: ${testTemplatesPath}`
+  }
+
+  return config
+}
+
+export
+function readTemplateConfig(cwd: string, config: M.UndergenConfig, templateName: string): M.TemplateConfig {
+	const templateDir = path.resolve(cwd, config.templatesDir, templateName)
+
+  let template_conffile: string = path.resolve(templateDir, './template.js')
+
+  // Require template conf file
+  const template_config: M.TemplateConfig = require(template_conffile)
+
+  // Ensure files directory
+  if (!template_config.filesDir) {
+		console.warn("Template filesDir directory not specified, defaulting to relative `./files`")
+    template_config.filesDir = './files'
+  }
+
+  // Assert template's files directory exists
+	const fullTemplateFilesPath = path.resolve(templateDir, template_config.filesDir)
+  if (!fs.existsSync(fullTemplateFilesPath)) {
+    throw `Template filesDir directory not found: ${fullTemplateFilesPath}`
+  }
+
+  template_config.filesDir = fullTemplateFilesPath
+
+  return template_config
+}
 
 export
 function parseValueForTemplateVar(opts: { cwd: string }) {
@@ -18,7 +67,7 @@ function parseValueForTemplateVar(opts: { cwd: string }) {
     let res = null
     switch(templateVar.vartype) {
       case M.VariableType.array:
-      	console.log("hey", value)
+        // We're just a bunch of goofs up here.
         res = value.replace(/([^\\]),/g, '$1😂').split('😂')
         break;
       case M.VariableType.directory:

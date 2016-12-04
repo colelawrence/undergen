@@ -45,6 +45,9 @@ async function GenCommand(args: Args) {
 
 	debug("GENERATE Vars:", vars_from_cli)
 
+    /////////////////////////
+	 // 1. PARSING TEMPLATE //
+  /////////////////////////
 	const template = ParseTemplate(cwd, templateName)
 
 	const definedIds = vars_from_cli.map(({key}) => key)
@@ -87,7 +90,10 @@ async function GenCommand(args: Args) {
     })
   
   debug("Rendering Template!")
-
+	
+    ///////////////////////////
+	 // 2. RENDERING TEMPLATE //
+  ///////////////////////////
 	const rendered = RenderTemplate(template, complete_vars, {cwd})
 
 	// Message confirm writing files
@@ -109,6 +115,9 @@ async function GenCommand(args: Args) {
     if (!confirm_overwrite) return console.log(chalk.bold('Generation cancelled 😅'))
   }
 
+    ///////////////////////
+	 // 3. WRITE TEMPLATE //
+  ///////////////////////
   WriteTemplate(rendered)
 
 	console.log(chalk.bold(chalk.green(`Generated ${filePathsToWrite.length} files 😎`)))
@@ -117,4 +126,13 @@ async function GenCommand(args: Args) {
       .map(fp => ' * ' + path.relative(cwd, fp))
       .join('\n')
   )
+
+	// execute onComplete command, for printing messages or whatever
+	getOnComplete(cwd, templateName)(complete_vars, rendered)
+}
+
+function getOnComplete(cwd, templateName){
+	const config = helpers.readUndergenConfig(cwd)
+  const template_config = helpers.readTemplateConfig(cwd, config, templateName)
+  return template_config.onComplete
 }

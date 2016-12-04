@@ -12,6 +12,9 @@
             "mocha"
         ]
     },
+    "include": [
+        "src/cli.ts"
+    ],
     "exclude": [
         "node_modules"
     ]

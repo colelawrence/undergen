@@ -5,12 +5,14 @@
   "scripts": {
     "test": "mocha ./test/*Test.ts --require ts-node/register",
     "build": "tsc",
+    "postinstall": "npm run build",
     "test:watch": "nodemon -e ts,ejs -w src -w test -x \"npm run test --silent\"",
     "test-0": "ts-node ./src/test.ts",
     "test-0:watch": "nodemon -e ts,ejs -w src -x \"npm run test-0 --silent\"",
     "test-cli": "ts-node ./src/cli.ts gen --cwd ./test/cases/workspace-1 component jkArr:\"good day!\",h\\\\,j componentName:howdy inputArr:hello,goodbye,\"yes please\"",
     "test-cli:watch": "nodemon -e ts,ejs -w src -x \"npm run test-cli --silent\""
   },
+  "bin": { "under": "./out/cli.js" },
   "author": "Cole Lawrence",
   "license": "ISC",
   "devDependencies": {

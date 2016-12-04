@@ -1,6 +1,121 @@
 Undergen
 ============
 
+## Usage
+
+```sh
+under gen yourTemplateName someDir:src/modules
+```
+
+and it will ask you about any other variables you need to define, based on your `templates/yourTemplateName/template.json`
+
+See [workspace-1](test/cases/workspace-1) for an example workspace for using undergen.
+
+## Example 1
+
+```js
+// File: .undergen.js
+module.exports = {
+  templatesDir: "./templatesDir"
+}
+```
+
+```js
+// File: templatesDir/coolTemplate/template.js
+module.exports = {
+  // put additional variables in here
+  // (some variables are already scraped from pathnames)
+  "variables": [
+    "inputArr" // this is a string array based on the suffix 'Arr'
+  ]
+}
+```
+
+```js
+// File: templatesDir/coolTemplate/files/{fileDir}/{fileName}.txt.erb
+<% inputArr.forEach(str => {%>
+  <%= str %>!
+<% }) %>
+```
+
+So, now calling `under gen coolTemplate fileDir:dest fileName:hello inputArr:a,b,c`,
+will write the following file at `dest/hello.txt`:
+
+```
+a!
+b!
+c!
+
+```
+
+## Example 2: Angular
+
+Let's say you want to generate lots of files like **Angular 2** components.
+
+```js
+// File: templatesDir/NGC/template.js
+module.exports = {
+  // put additional variables in here
+  // (some variables are already scraped from pathnames)
+  "variables": [
+    "componentName", // this is a string based on no significant suffix
+    "componentCapitallizedName" // this is a string as well
+  ]
+}
+```
+
+Note, that for didactic purposes I'm skipping a module file.
+
+```js
+// File: templatesDir/NGC/files/{fileDir}/{componentName}/{componentName}.component.ts.erb
+@Component({
+  template: require("./<%= componentName %>.component.html"),
+  styles: [require("./<%= componentName %>.component.scss")]
+})
+class <%= componentCapitallizedName %>Component {
+  // insert significant things
+  // could have a inputsArr generate the inputs here and in the html file
+}
+```
+```html
+<!-- File: templatesDir/NGC/files/{fileDir}/{componentName}/{componentName}.component.html.erb -->
+
+<!-- <%= componentCapitallizedName %>Component template -->
+<!-- could have a inputsArr generate inputs needed here with bindings -->
+```
+```css
+/* File: templatesDir/NGC/files/{fileDir}/{componentName}/{componentName}.component.scss.erb -->
+
+/* <%= componentCapitallizedName %>Component styles */
+```
+
+So, now calling `under gen NGC fileDir:src/app/shared componentName:hello componentCapitallizedName:Hello`,
+will write the following files (_excluding_ `File: ` header):
+
+```js
+// File: src/app/shared/hello/hello.component.ts
+@Component({
+  template: require("./hello.component.html"),
+  styles: [require("./hello.component.scss")]
+})
+class HelloComponent {
+  // insert significant things
+  // could have a inputsArr generate the inputs here and in the html file
+}
+```
+```html
+<!-- File: src/app/shared/hello/hello.component.html -->
+
+<!-- HelloComponent template -->
+<!-- could have a inputsArr generate inputs needed here with bindings -->
+```
+```css
+/* File: src/app/shared/hello/hello.component.scss -->
+
+/* HelloComponent styles */
+```
+
+
 This is a code generation utility for when you want to store the 
 template files in the workspace you're in.
 
@@ -17,10 +132,10 @@ Variable types work as follows (not case sensitive):
  * `*Num` | `*Count`: `number` Requires number
  * `*`: `string` Requires any string
 
-You can see how this parsing works in the [parse.ts](./src/parse.ts) file.
+You can see how this parsing works in the [helpers.ts](./src/helpers.ts) file.
 
 Todo:
- - [ ] CLI interface created based on compiled templates
+ - [x] CLI interface created based on compiled templates
     - Looking into [inquirer](https://github.com/SBoudrias/Inquirer.js) and [inquirer directory](https://github.com/nicksrandall/inquirer-directory)
  - [ ] :art: Validation error reporting.
  - [ ] :white_check_mark: General Testing (also good for documentation).

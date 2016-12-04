@@ -15,12 +15,11 @@ const PATH_RE = /\{\s*([\$\w]+)\s*\}/g
 
 export
 function ParseTemplate(cwd: string, templateName: string): M.Template {
-  const conffile: string = path.resolve(cwd, './.undergen.js')
+	const config = helpers.readUndergenConfig(cwd)
 
-  const config: { templatesDir: string } = require(conffile)
+  const template_config = helpers.readTemplateConfig(cwd, config, templateName)
 
-	const templateDir = path.resolve(cwd, config.templatesDir, templateName)
-	const templateFilesDir = path.resolve(templateDir, 'files')
+	const {filesDir: templateFilesDir} = template_config
 
 	const templates: M.FileTemplate[] =
   	walkSync(templateFilesDir)
@@ -53,11 +52,6 @@ function ParseTemplate(cwd: string, templateName: string): M.Template {
     .map(p => PATH_RE.exec(p)).filter(a => a != null)
     // Add to set (removing duplicates)
     .forEach(([,match]) => templateVarIdsSet.add(match))
-
-  // Get template conf file
-  let template_conffile: string = path.resolve(templateDir, './template.js')
-
-  const template_config: { variables: string[] } = require(template_conffile)
 
   template_config
     .variables

@@ -1,5 +1,17 @@
 
 export
+interface UndergenConfig {
+  templatesDir?: string // defaults to 'templates'
+}
+
+export
+interface TemplateConfig {
+  variables?: string[],
+  filesDir?: string, // defaults to 'files'
+  onComplete?: (variables: any, renderedFiles: FileToWrite[]) => void
+}
+
+export
 interface FileToWrite {
   filename: string
   basepath: string
