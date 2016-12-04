@@ -32,9 +32,9 @@ function ParseTemplate(cwd: string, templateName: string): M.Template {
       const contents = fs.readFileSync(path.resolve(basedir, filename), 'utf8')
     	return {
         basepath: wkpath,
+        // replace optional ejs extension
         filename: filename.replace(/.ejs$/i, ''),
-        // if template is on own line, then reduce entire line
-        contents: contents.replace(/\n\s*(<%.+?%>)\s*\n/g, '$1\n')
+        contents: contents
       }
     })
   

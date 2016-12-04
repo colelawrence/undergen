@@ -104,18 +104,18 @@ function createQuestionFromTemplateVar(opts: {cwd: string}) {
     }
     switch(tv.vartype) {
       case M.VariableType.array:
-      	res.message = `Define ${tv.identifier}. Enter strings separated by commas. Ex: "hello,goodbye, m" => ["hello", "goodbye", " m"]`
+      	res.message = `Define ${tv.identifier}. Enter strings separated by commas.\nEx: "hello,goodbye, m" => ["hello", "goodbye", " m"]\n`
         res.type = 'string'
         break
       case M.VariableType.directory:
-      	res.message = `Define ${tv.identifier}`
+      	res.message = `Define ${tv.identifier}.`
         // We need to add basePath for inquirer-directory module
         ;(<any> res).basePath = opts.cwd
         res.type = 'directory'
         break
       case M.VariableType.number:
       	res.message = `Define ${tv.identifier}. Enter number:`
-        res.validate = (input) => isNaN(parseFloat(input)) ? "Enter a number" : true
+        res.validate = (input) => isNaN(parseFloat(input)) ? `Unable to parse not a number "${input}".` : true
         break
       case M.VariableType.string:
       	res.message = `Define ${tv.identifier}. Enter string:`

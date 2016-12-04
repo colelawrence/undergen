@@ -1,6 +1,6 @@
 {
   "name": "undergen",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Workspace code generator using JSON configurations and underscore templating.",
   "scripts": {
     "test": "mocha ./test/*Test.ts --require ts-node/register",
@@ -15,6 +15,10 @@
   "bin": { "under": "./dist/cli.js" },
   "engines" : { "node" : ">=6" },
   "author": "Cole Lawrence",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ZombieHippie/undergen.git"
+  },
   "license": "ISC",
   "devDependencies": {
     "@types/chalk": "^0.4.31",

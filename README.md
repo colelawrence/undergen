@@ -137,6 +137,6 @@ You can see how this parsing works in the [helpers.ts](./src/helpers.ts) file.
 Todo:
  - [x] CLI interface created based on compiled templates
     - Looking into [inquirer](https://github.com/SBoudrias/Inquirer.js) and [inquirer directory](https://github.com/nicksrandall/inquirer-directory)
- - [ ] :art: Validation error reporting.
+ - [x] :art: Validation error reporting.
  - [ ] :white_check_mark: General Testing (also good for documentation).
- - [ ] :memo: Documentation.
+ - [ ] :memo: User documentation.

@@ -24,6 +24,7 @@ async function GenCommand(args: Args) {
   const cwd = path.resolve(args.cwd || process.cwd())
 
 	const DEBUG = !!args.debug
+	const DRY = !!args.dry
 
 	function debug(...args) {
     if (!DEBUG) return
@@ -51,7 +52,7 @@ async function GenCommand(args: Args) {
   const undefinedIds = template.vars
   	.filter(({identifier: id}) => definedIds.indexOf(id) === -1)
 
-  console.log("Undefined keys:", undefinedIds.map(({identifier: id}) => id))
+  console.log("Undefined variables:", undefinedIds.map(({identifier: id}) => id).join(', '))
 
 	const questions: inquirer.Question[] =
   	undefinedIds.map(helpers.createQuestionFromTemplateVar({cwd}))
@@ -115,9 +116,13 @@ async function GenCommand(args: Args) {
     ///////////////////////
 	 // 3. WRITE TEMPLATE //
   ///////////////////////
-  WriteTemplate(rendered)
+  if (DRY) {
+		console.log(chalk.bold.yellow("DRY run; no generated files."))
+  } else {
+    WriteTemplate(rendered)
+  }
 
-	console.log(chalk.bold(chalk.green(`Generated ${filePathsToWrite.length} files 😎`)))
+	console.log(chalk.bold.green(`Generated ${filePathsToWrite.length} files 😎`))
 	console.log(
     filePathsToWrite
       .map(fp => ' * ' + path.relative(cwd, fp))

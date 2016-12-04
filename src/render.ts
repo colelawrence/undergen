@@ -19,9 +19,18 @@ function RenderTemplate (template: M.Template, vars: any, options = {}): M.FileT
 }
 
 function renderFile (file: M.FileTemplate, vars: {[identifier: string]: any}): M.FileToWrite {
+  // Special normalization of template string
+  const contents = file.contents
+    // if template is on own line, then reduce entire line
+  	.replace(/\n\s*(<%[^=-].+?%>)\s*\n/g, '$1\n')
+    // if template is operation starting line, then reduce
+  	.replace(/\n(<%[^=-].+?%>)$/g, '$1')
+
+  const renderedContents = _.template(contents)(vars)
+
   return <M.FileToWrite> {
     basepath: file.basepath.replace(PATH_RE, (_match, id) => vars[id] ),
     filename: file.filename.replace(PATH_RE, (_match, id) => vars[id] ),
-    contents: _.template(file.contents)(vars)
+    contents: renderedContents
   }
 }
