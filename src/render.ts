@@ -1,7 +1,8 @@
 
 import * as M from './models'
 
-import _ = require('lodash')
+import ejs = require('ejs')
+import path = require('path')
 
 // TODO configurable?
 const PATH_RE = /\{\s*([\$\w]+)\s*\}/g
@@ -15,22 +16,39 @@ function RenderTemplate (template: M.Template, vars: any, options = {}): M.FileT
 	if (undefinedVars.length > 0) throw "Undefined variables in options: " + undefinedVars.join(', ')
 
 	return template.files
-  	.map((file) => renderFile(file, vars))
+  	.map((file) => renderFile(file, vars, template))
 }
 
-function renderFile (file: M.FileTemplate, vars: {[identifier: string]: any}): M.FileToWrite {
-  // Special normalization of template string
+function renderFile (file: M.FileTemplate, vars: {[identifier: string]: any}, template: M.Template): M.FileToWrite {
   const contents = file.contents
-    // if template is on own line, then reduce entire line
-  	.replace(/\n\s*(<%[^=-].+?%>)\s*\n/g, '$1\n')
-    // if template is operation starting line, then reduce
-  	.replace(/\n(<%[^=-].+?%>)$/g, '$1')
+    // Cost of learning to always use <%- ? nah...
+  	.replace(/<%=/g, '<%-')
 
-  const renderedContents = _.template(contents)(vars)
+	// Access to data includes lodash as _, locals of template config, and vars passed in
+	const data = Object.assign(
+    { _: require('lodash') },
+    template.locals,
+    vars
+  )
+
+  const renderedContents = ejs.render(contents, data, <any> {
+    // absolute paths resolved to here
+    root: template.basepath,
+    context: {}, // this
+    filename: path.resolve(template.filespath, file.basepath, file.filename),
+  })
 
   return <M.FileToWrite> {
-    basepath: file.basepath.replace(PATH_RE, (_match, id) => vars[id] ),
-    filename: file.filename.replace(PATH_RE, (_match, id) => vars[id] ),
+    basepath: file.basepath
+      // use variables in path
+    	.replace(PATH_RE, (_match, id) => vars[id] ),
+
+    filename: file.filename
+      // remove ejs extension if present
+    	.replace(/\.ejs$/, '')
+      // use variables in path
+      .replace(PATH_RE, (_match, id) => vars[id] ),
+
     contents: renderedContents
   }
 }

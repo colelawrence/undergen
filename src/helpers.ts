@@ -44,6 +44,8 @@ function readTemplateConfig(cwd: string, config: M.UndergenConfig, templateName:
   // Require template conf file
   const template_config: M.TemplateConfig = require(template_conffile)
 
+	template_config.baseDir = templateDir
+
   // Ensure files directory
   if (!template_config.filesDir) {
 		console.warn("Template filesDir directory not specified, defaulting to relative `./files`")

@@ -1,5 +1,9 @@
+<%# this "/includes" resolves to root of template folder _%>
+<%= include('/includes/header.ejs', { hello: 'hello' }) %>
+
+// is cole cool? <%= isColeCool ? "yes" : "no" %>
 class Component {
-<% if (inputArr) { inputArr.forEach((input) => { %>
-  @Input() <%= input %>
+<% if (inputArr) { inputArr.forEach((input) => { -%>
+  @Input() <%= input -%>
 <% }) } %>
 }

@@ -15,5 +15,8 @@ console.log("template", template)
 const compDir = path.resolve(wksp1, './src/hello')
 const files = RenderTemplate(template, { componentName: "hello", componentDir: compDir, inputArr: ["a1", "b2"] })
 
-console.log("files", files)
-WriteTemplate(files)
+console.log("files\n")
+console.log(files.map(f => {
+  return `<${f.basepath}/${f.filename}>\n${f.contents}<<<<<<>>>>>>`
+}).join('\n'))
+//WriteTemplate(files)

@@ -4,6 +4,9 @@ module.exports = {
   variables: [
     "inputArr"
   ],
+  locals: {
+    isColeCool: true
+  },
   onComplete: (vars) => {
     const componentName = vars.componentName
     console.log("Now add the following import to the top of your module file:")

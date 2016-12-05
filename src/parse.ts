@@ -19,21 +19,19 @@ function ParseTemplate(cwd: string, templateName: string): M.Template {
 
   const template_config = helpers.readTemplateConfig(cwd, config, templateName)
 
-	const {filesDir: templateFilesDir} = template_config
-
 	const templates: M.FileTemplate[] =
-  	walkSync(templateFilesDir)
+  	walkSync(template_config.filesDir)
   	// Take only files
   	.filter(({stats}) => stats.isFile())
   	// Read files
   	.map(({filename, basedir}) => {
       path.resolve(basedir, filename)
-      let wkpath = path.relative(templateFilesDir, basedir)
+      let wkpath = path.relative(template_config.filesDir, basedir)
       const contents = fs.readFileSync(path.resolve(basedir, filename), 'utf8')
     	return {
         basepath: wkpath,
         // replace optional ejs extension
-        filename: filename.replace(/.ejs$/i, ''),
+        filename: filename,
         contents: contents
       }
     })
@@ -65,6 +63,9 @@ function ParseTemplate(cwd: string, templateName: string): M.Template {
   	.map(helpers.createTemplateVariableFromIdentifier)
 
   return <M.Template> {
+    basepath: template_config.baseDir,
+    filespath: template_config.filesDir,
+    locals: template_config.locals,
 		vars: templateVars,
     files: templates
   }

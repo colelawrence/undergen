@@ -6,9 +6,14 @@ interface UndergenConfig {
 
 export
 interface TemplateConfig {
-  variables?: string[],
-  filesDir?: string, // defaults to 'files'
+	// configurable
+  variables?: string[]
+  filesDir?: string // defaults to 'files'
+  locals?: {[key: string]: any}
   onComplete?: (variables: any, renderedFiles: FileToWrite[]) => void
+
+  // the directory of this ./template.js file (should not be configured)
+  baseDir?: string
 }
 
 export
@@ -28,7 +33,10 @@ interface FileTemplate {
 export
 interface Template {
   vars: TemplateVariable[]
+  locals: {[key: string]: any}
   files: FileTemplate[]
+  basepath: string
+  filespath: string
 }
 
 export
