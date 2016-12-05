@@ -16,7 +16,7 @@ import fs = require('fs')
 import inquirer = require('inquirer')
 
 // Inquirer plugins
-inquirer.registerPrompt('directory', require('inquirer-directory'));
+inquirer.registerPrompt('directory', require('inquirer-directory-undergen'));
 
 export
 async function GenCommand(args: Args) {
