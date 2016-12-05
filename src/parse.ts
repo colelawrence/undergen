@@ -29,7 +29,7 @@ function ParseTemplate(cwd: string, templateName: string): M.Template {
       let wkpath = path.relative(template_config.filesDir, basedir)
       const contents = fs.readFileSync(path.resolve(basedir, filename), 'utf8')
     	return {
-        basepath: wkpath,
+        baseDir: wkpath,
         // replace optional ejs extension
         filename: filename,
         contents: contents
@@ -41,7 +41,7 @@ function ParseTemplate(cwd: string, templateName: string): M.Template {
 	const filenameVars = templates
     .map(({filename}) => filename.match(PATH_RE))
 	const basenameVars = templates
-    .map(({basepath}) => basepath.match(PATH_RE))
+    .map(({baseDir}) => baseDir.match(PATH_RE))
   
   basenameVars.concat(filenameVars)
     // Separate all the places in the path
@@ -63,8 +63,8 @@ function ParseTemplate(cwd: string, templateName: string): M.Template {
   	.map(helpers.createTemplateVariableFromIdentifier)
 
   return <M.Template> {
-    basepath: template_config.baseDir,
-    filespath: template_config.filesDir,
+    baseDir: template_config.baseDir,
+    filesDir: template_config.filesDir,
     locals: template_config.locals,
 		vars: templateVars,
     files: templates

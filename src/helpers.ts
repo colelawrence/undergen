@@ -53,12 +53,12 @@ function readTemplateConfig(cwd: string, config: M.UndergenConfig, templateName:
   }
 
   // Assert template's files directory exists
-	const fullTemplateFilesPath = path.resolve(templateDir, template_config.filesDir)
-  if (!fs.existsSync(fullTemplateFilesPath)) {
-    throw `Template filesDir directory not found: ${fullTemplateFilesPath}`
+	const fullTemplateFilesDir = path.resolve(templateDir, template_config.filesDir)
+  if (!fs.existsSync(fullTemplateFilesDir)) {
+    throw `Template filesDir directory not found: ${fullTemplateFilesDir}`
   }
 
-  template_config.filesDir = fullTemplateFilesPath
+  template_config.filesDir = fullTemplateFilesDir
 
 	if (template_config.variables == null) {
 	  template_config.variables = []

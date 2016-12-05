@@ -33,13 +33,13 @@ function renderFile (file: M.FileTemplate, vars: {[identifier: string]: any}, te
 
   const renderedContents = ejs.render(contents, data, <any> {
     // absolute paths resolved to here
-    root: template.basepath,
+    root: template.baseDir,
     context: {}, // this
-    filename: path.resolve(template.filespath, file.basepath, file.filename),
+    filename: path.resolve(template.filesDir, file.baseDir, file.filename),
   })
 
   return <M.FileToWrite> {
-    basepath: file.basepath
+    baseDir: file.baseDir
       // use variables in path
     	.replace(PATH_RE, (_match, id) => vars[id] ),
 

@@ -9,9 +9,9 @@ export
 function WriteTemplate(filesToWrite: M.FileToWrite[]) {
   filesToWrite
   .forEach((file) => {
-		mkdirp.sync(file.basepath)
+		mkdirp.sync(file.baseDir)
 
-		const filepath = path.resolve(file.basepath, file.filename)
+		const filepath = path.resolve(file.baseDir, file.filename)
 		fs.writeFileSync(filepath, file.contents)
   })
 }

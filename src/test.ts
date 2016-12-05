@@ -17,6 +17,6 @@ const files = RenderTemplate(template, { componentName: "hello", componentDir: c
 
 console.log("files\n")
 console.log(files.map(f => {
-  return `<${f.basepath}/${f.filename}>\n${f.contents}<<<<<<>>>>>>`
+  return `<${f.baseDir}/${f.filename}>\n${f.contents}<<<<<<>>>>>>`
 }).join('\n'))
 //WriteTemplate(files)

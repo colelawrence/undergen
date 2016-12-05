@@ -96,7 +96,7 @@ async function GenCommand(args: Args) {
 
 	// Message confirm writing files
   const filePathsToWrite = rendered
-  	.map(t => path.resolve(t.basepath, t.filename))
+  	.map(t => path.resolve(t.baseDir, t.filename))
 	
   const filesToReplace = filePathsToWrite
   	.filter(fp => fs.existsSync(fp))

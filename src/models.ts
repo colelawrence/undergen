@@ -19,14 +19,14 @@ interface TemplateConfig {
 export
 interface FileToWrite {
   filename: string
-  basepath: string
+  baseDir: string
   contents: string
 }
 
 export
 interface FileTemplate {
   filename: string
-  basepath: string
+  baseDir: string
   contents: string
 }
 
@@ -35,8 +35,8 @@ interface Template {
   vars: TemplateVariable[]
   locals: {[key: string]: any}
   files: FileTemplate[]
-  basepath: string
-  filespath: string
+  baseDir: string
+  filesDir: string
 }
 
 export

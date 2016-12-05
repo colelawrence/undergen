@@ -11,6 +11,30 @@ and it will ask you about any other variables you need to define, based on your 
 
 See [workspace-1](test/cases/workspace-1) for an example workspace for using undergen.
 
+## Configuration files
+
+```ts
+export
+interface UndergenConfig {
+  templatesDir?: string // defaults to 'templates'
+}
+
+module.exports = {
+	// Variables which need to be defined for template
+  variables?: string[]
+
+	// files directory relative to this file
+  // The files directory is a mirrored representation of these templates
+  filesDir?: string // defaults to './files'
+
+  // locals that can be used inside the template files
+  locals?: {[key: string]: any}
+
+  // Called after files are created
+  onComplete?: (variables: any, renderedFiles: FileToWrite[]) => void
+}
+```
+
 ## Example 1
 
 ```js
