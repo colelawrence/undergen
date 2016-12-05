@@ -12,6 +12,7 @@ import path = require('path')
 
 // TODO configurable?
 const PATH_RE = /\{\s*([\$\w]+)\s*\}/g
+const PATH_REl = /\{\s*([\$\w]+)\s*\}/
 
 export
 function ParseTemplate(cwd: string, templateName: string): M.Template {
@@ -42,14 +43,12 @@ function ParseTemplate(cwd: string, templateName: string): M.Template {
     .map(({filename}) => filename.match(PATH_RE))
 	const basenameVars = templates
     .map(({baseDir}) => baseDir.match(PATH_RE))
-  
+
   basenameVars.concat(filenameVars)
-    // Separate all the places in the path
-    .reduce(flatten, []).filter(a => a != null)
-    // Get each piece separately
-    .map(p => PATH_RE.exec(p)).filter(a => a != null)
+  	.reduce(flatten, []).filter(a => a != null)
+    .map(p => PATH_REl.exec(p)[1])
     // Add to set (removing duplicates)
-    .forEach(([,match]) => templateVarIdsSet.add(match))
+    .forEach(id => templateVarIdsSet.add(id))
 
   template_config
     .variables
