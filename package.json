@@ -1,6 +1,6 @@
 {
   "name": "undergen",
-  "version": "0.2.0-1",
+  "version": "0.3.0",
   "description": "Workspace code generator using JSON configurations and underscore templating.",
   "scripts": {
     "test": "mocha ./test/*Test.ts --require ts-node/register",
@@ -9,8 +9,10 @@
     "test:watch": "nodemon -e ts,ejs -w src -w test -x \"npm run test --silent\"",
     "test-0": "ts-node ./src/test.ts",
     "test-0:watch": "nodemon -e ts,ejs -w src -x \"npm run test-0 --silent\"",
-    "test-cli": "ts-node ./src/cli.ts gen --cwd ./test/cases/workspace-1 component jkArr:\"good day!\",h\\\\,j componentName:howdy inputArr:hello,goodbye,\"yes please\"",
-    "test-cli:watch": "nodemon -e ts,ejs -w src -x \"npm run test-cli --silent\""
+    "test-cli": "ts-node ./src/cli.ts gen --cwd ./test/cases/workspace-1 component jkArr:\"good day!\",h\\\\,j componentName:howdy inputArr:",
+    "test-cli:watch": "nodemon -e ts,ejs -w src -x \"npm run test-cli --silent\"",
+    "test-cli-0": "ts-node ./src/cli.ts gen --force --cwd ./test/cases/workspace-1 component jkArr:\"good day!\",h\\\\,j componentName:howdy inputArr: componentDir:./src/app/shared",
+    "test-cli-0:watch": "nodemon -e ts,ejs -w src -x \"npm run test-cli-0 --silent\""
   },
   "bin": {
     "under": "./dist/cli.js"
@@ -42,7 +44,7 @@
     "ejs": "^2.5.3",
     "fs-walk": "0.0.1",
     "inquirer": "^1.2.3",
-    "inquirer-directory": "^2.1.0",
+    "inquirer-directory": "github:zombiehippie/inquirer-directory#undergen",
     "lodash": "^4.17.2",
     "minimist": "^1.2.0",
     "mkdirp": "^0.5.1",

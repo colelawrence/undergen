@@ -27,6 +27,10 @@ module.exports = {
   // The files directory is a mirrored representation of these templates
   filesDir?: string // defaults to './files'
 
+  // Where do these files go?
+  // It is also the starting directory of the directory selector
+  outDir?: string // defaults to root of project './'
+
   // locals that can be used inside the template files
   locals?: {[key: string]: any}
 
@@ -57,9 +61,9 @@ module.exports = {
 
 ```js
 // File: templatesDir/coolTemplate/files/{fileDir}/{fileName}.txt.erb
-<% inputArr.forEach(str => {%>
+<% inputArr.forEach(str => { _%>
   <%= str %>!
-<% }) %>
+<% }) _%>
 ```
 
 So, now calling `under gen coolTemplate fileDir:dest fileName:hello inputArr:a,b,c`,

@@ -4,6 +4,7 @@ module.exports = {
   variables: [
     "inputArr"
   ],
+  outDir: "./src/app/shared",
   locals: {
     isColeCool: true
   },

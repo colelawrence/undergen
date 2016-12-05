@@ -25,6 +25,7 @@ async function GenCommand(args: Args) {
 
 	const DEBUG = !!args.debug
 	const DRY = !!args.dry
+	const FORCE = !!args.force
 
 	function debug(...args) {
     if (!DEBUG) return
@@ -55,7 +56,7 @@ async function GenCommand(args: Args) {
   console.log("Undefined variables:", undefinedIds.map(({identifier: id}) => id).join(', '))
 
 	const questions: inquirer.Question[] =
-  	undefinedIds.map(helpers.createQuestionFromTemplateVar({cwd}))
+  	undefinedIds.map(helpers.createQuestionFromTemplateVar({cwd, template}))
 
   const answers = await inquirer.prompt(questions)
 
@@ -104,13 +105,18 @@ async function GenCommand(args: Args) {
   if (filesToReplace.length > 0) {
 		console.log(chalk.bold.red("The following files will be overwritten: 😱"))
     console.log(filesToReplace.map(fp => ` ${chalk.bold('*')} ${chalk.yellow(fp)}`).join('\n'))
-    const {confirm_overwrite} = await inquirer.prompt({
-      name: 'confirm_overwrite',
-      message: `Confirm overwrite of listed ${filesToReplace.length} files? 🤔`,
-      type: 'confirm',
-    })
 
-    if (!confirm_overwrite) return console.log(chalk.bold('Generation cancelled 😅'))
+    if (FORCE) {
+      console.log(chalk.bold.red("Forcing overwrite via --force: 🤐"))
+
+  	} else {
+      const {confirm_overwrite} = await inquirer.prompt({
+        name: 'confirm_overwrite',
+        message: `Confirm overwrite of listed ${filesToReplace.length} files? 🤔`,
+        type: 'confirm',
+      })
+      if (!confirm_overwrite) return console.log(chalk.bold('Generation cancelled 😅'))
+    }
   }
 
     ///////////////////////
@@ -135,6 +141,7 @@ async function GenCommand(args: Args) {
 
 function getOnComplete(cwd, templateName){
 	const config = helpers.readUndergenConfig(cwd)
-  const template_config = helpers.readTemplateConfig(cwd, config, templateName)
+  const templateDir = path.resolve(cwd, config.templatesDir, templateName)
+  const template_config = helpers.readTemplateConfig(cwd, templateDir, config)
   return template_config.onComplete
 }

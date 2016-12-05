@@ -31,24 +31,31 @@ function renderFile (file: M.FileTemplate, vars: {[identifier: string]: any}, te
     vars
   )
 
-  const renderedContents = ejs.render(contents, data, <any> {
-    // absolute paths resolved to here
-    root: template.baseDir,
-    context: {}, // this
-    filename: path.resolve(template.filesDir, file.baseDir, file.filename),
-  })
+	const templateFilePath = path.resolve(template.filesDir, file.baseDir, file.filename)
 
-  return <M.FileToWrite> {
-    baseDir: file.baseDir
-      // use variables in path
-    	.replace(PATH_RE, (_match, id) => vars[id] ),
+	try {
+    const renderedContents = ejs.render(contents, data, <any> {
+      // absolute paths resolved to here
+      root: template.baseDir,
+      context: {}, // this
+      filename: templateFilePath,
+    })
 
-    filename: file.filename
-      // remove ejs extension if present
-    	.replace(/\.ejs$/, '')
-      // use variables in path
-      .replace(PATH_RE, (_match, id) => vars[id] ),
+    return <M.FileToWrite> {
+      baseDir: file.baseDir
+        // use variables in path
+        .replace(PATH_RE, (_match, id) => vars[id] ),
 
-    contents: renderedContents
+      filename: file.filename
+        // remove ejs extension if present
+        .replace(/\.ejs$/, '')
+        // use variables in path
+        .replace(PATH_RE, (_match, id) => vars[id] ),
+
+      contents: renderedContents
+    }
+  } catch (error) {
+    throw new Error(`EJS Error rendering: "${path.relative(path.resolve('./'), templateFilePath)}"
+${error.message}`)
   }
 }

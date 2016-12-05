@@ -18,11 +18,16 @@ function readUndergenConfig(cwd): M.UndergenConfig {
 	const conffile: string = path.resolve(cwd, './.undergen.js')
 
   // Require undergen conf file
-  const config: M.UndergenConfig = require(conffile)
+  let config: M.UndergenConfig
+  try {
+    config = require(conffile)
+  } catch (err) {
+    console.warn("No './.undergen.js' file found. Using defaults; looking for templates in './templates'.")
+		config = {}
+  }
 
   // Ensure templates directory
   if (!config.templatesDir) {
-		console.warn("Templates directory not specified, defaulting to `./templates`")
     config.templatesDir = './templates'
   }
 
@@ -36,19 +41,14 @@ function readUndergenConfig(cwd): M.UndergenConfig {
 }
 
 export
-function readTemplateConfig(cwd: string, config: M.UndergenConfig, templateName: string): M.TemplateConfig {
-	const templateDir = path.resolve(cwd, config.templatesDir, templateName)
-
+function readTemplateConfig(cwd, templateDir: string, config: M.UndergenConfig): M.TemplateConfig {
   let template_conffile: string = path.resolve(templateDir, './template.js')
 
   // Require template conf file
   const template_config: M.TemplateConfig = require(template_conffile)
 
-	template_config.baseDir = templateDir
-
   // Ensure files directory
   if (!template_config.filesDir) {
-		console.warn("Template filesDir directory not specified, defaulting to relative `./files`")
     template_config.filesDir = './files'
   }
 
@@ -59,6 +59,14 @@ function readTemplateConfig(cwd: string, config: M.UndergenConfig, templateName:
   }
 
   template_config.filesDir = fullTemplateFilesDir
+
+  // Assert template's out directory exists
+	const fullTemplateOutDir = path.resolve(cwd, template_config.outDir || './')
+  if (!fs.existsSync(fullTemplateOutDir)) {
+    throw `Template outDir directory not found: ${fullTemplateOutDir}`
+  }
+
+  template_config.outDir = fullTemplateOutDir
 
 	if (template_config.variables == null) {
 	  template_config.variables = []
@@ -78,7 +86,11 @@ function parseValueForTemplateVar(opts: { cwd: string }) {
     switch(templateVar.vartype) {
       case M.VariableType.array:
         // We're just a bunch of goofs up here.
-        res = value.replace(/([^\\]),/g, '$1😂').split('😂')
+        res = value
+        	.replace(/([^\\]),/g, '$1😂').split('😂')
+          // Ensure that there is at least one string
+          .filter(str => str && str.length)
+
         break;
       case M.VariableType.directory:
         res = path.resolve(opts.cwd, value)
@@ -98,7 +110,7 @@ function parseValueForTemplateVar(opts: { cwd: string }) {
 import inquirer = require('inquirer')
 
 export
-function createQuestionFromTemplateVar(opts: {cwd: string}) {
+function createQuestionFromTemplateVar(opts: {cwd: string, template: M.Template}) {
   return <(t: M.TemplateVariable) => inquirer.Question>
   function (tv) {
     let res: inquirer.Question = {
@@ -113,6 +125,8 @@ function createQuestionFromTemplateVar(opts: {cwd: string}) {
       	res.message = `Define ${tv.identifier}.`
         // We need to add basePath for inquirer-directory module
         ;(<any> res).basePath = opts.cwd
+        ;(<any> res).startPath = opts.template.outDir || opts.cwd
+        ;(<any> res).cwd = opts.cwd
         res.type = 'directory'
         break
       case M.VariableType.number:

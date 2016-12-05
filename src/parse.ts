@@ -18,7 +18,8 @@ export
 function ParseTemplate(cwd: string, templateName: string): M.Template {
 	const config = helpers.readUndergenConfig(cwd)
 
-  const template_config = helpers.readTemplateConfig(cwd, config, templateName)
+  const templateDir = path.resolve(cwd, config.templatesDir, templateName)
+  const template_config = helpers.readTemplateConfig(cwd, templateDir, config)
 
 	const templates: M.FileTemplate[] =
   	walkSync(template_config.filesDir)
@@ -62,11 +63,12 @@ function ParseTemplate(cwd: string, templateName: string): M.Template {
   	.map(helpers.createTemplateVariableFromIdentifier)
 
   return <M.Template> {
-    baseDir: template_config.baseDir,
+    baseDir: templateDir,
     filesDir: template_config.filesDir,
     locals: template_config.locals,
 		vars: templateVars,
-    files: templates
+    outDir: template_config.outDir,
+    files: templates,
   }
 }
 

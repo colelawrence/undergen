@@ -4,3 +4,4 @@ dist
 .alm
 .editorconfig
 test/**/src
+.DS_Store

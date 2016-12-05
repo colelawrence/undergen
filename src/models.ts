@@ -9,11 +9,9 @@ interface TemplateConfig {
 	// configurable
   variables?: string[]
   filesDir?: string // defaults to 'files'
+  outDir?: string // defaults to root of project; './'
   locals?: {[key: string]: any}
   onComplete?: (variables: any, renderedFiles: FileToWrite[]) => void
-
-  // the directory of this ./template.js file (should not be configured)
-  baseDir?: string
 }
 
 export
@@ -35,6 +33,7 @@ interface Template {
   vars: TemplateVariable[]
   locals: {[key: string]: any}
   files: FileTemplate[]
+  outDir: string,
   baseDir: string
   filesDir: string
 }
