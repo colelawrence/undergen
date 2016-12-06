@@ -1,6 +1,6 @@
 {
   "name": "undergen",
-  "version": "0.3.0-1",
+  "version": "0.4.0",
   "description": "Workspace code generator using JSON configurations and underscore templating.",
   "scripts": {
     "test": "mocha ./test/*Test.ts --require ts-node/register",
