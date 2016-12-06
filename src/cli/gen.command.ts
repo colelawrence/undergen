@@ -32,28 +32,29 @@ async function GenCommand(args: Args) {
     console.log.apply(console, args)
   }
 
+	debug("CWD:", cwd)
+
   const [templateName, ...templateVarArgs] = args._
 
-	debug("CWD:", cwd)
 	debug("GENERATE Template:", templateName)
-
-	const vars_from_cli = templateVarArgs
-  	// map into {key, value} pairs acknowledging identifier suffix
-    .map(helpers.createKeyValuePairsFromArgument({cwd}))
-
-	debug("GENERATE Vars:", vars_from_cli)
 
     /////////////////////////
 	 // 1. PARSING TEMPLATE //
   /////////////////////////
 	const template = ParseTemplate(cwd, templateName)
 
-	const definedIds = vars_from_cli.map(({key}) => key)
+	const vars_from_cli = templateVarArgs
+  	// map into {key, value} pairs acknowledging identifier suffix
+    .map(helpers.createKeyValuePairsFromArgument(template, {cwd}))
+
+	debug("GENERATE Vars:", vars_from_cli)
+	
+  const definedIds = vars_from_cli.map(({key}) => key)
 
   const undefinedIds = template.vars
-  	.filter(({identifier: id}) => definedIds.indexOf(id) === -1)
+  	.filter(v => definedIds.indexOf(v.config.id) === -1)
 
-  console.log("Undefined variables:", undefinedIds.map(({identifier: id}) => id).join(', '))
+  console.log("Undefined variables:", undefinedIds.map(v => v.config.id).join(', '))
 
 	const questions: inquirer.Question[] =
   	undefinedIds.map(helpers.createQuestionFromTemplateVar({cwd, template}))
@@ -78,7 +79,7 @@ async function GenCommand(args: Args) {
     .map(key => VAR_RE.exec(key))
     .map(([match, identifier]) => `${identifier}:${answers[match]}`)		
   	// map into {key, value} pairs acknowledging identifier suffix
-    .map(helpers.createKeyValuePairsFromArgument({cwd}))
+    .map(helpers.createKeyValuePairsFromArgument(template, {cwd}))
 
 	// Store the variables we will actually use to pass into our renderer
   const complete_vars = {}

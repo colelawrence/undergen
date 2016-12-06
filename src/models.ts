@@ -5,13 +5,25 @@ interface UndergenConfig {
 }
 
 export
+interface TemplateConfigVariable {
+  id: string
+	name?: string
+  description?: string
+  default?: (answers: {[varid: string]: any}) => any
+}
+
+export
 interface TemplateConfig {
 	// configurable
-  variables?: string[]
+  
+  // these can also be strings,
+  // which we will turn into config = { id: config }
+  variables?: TemplateConfigVariable[]
+
   filesDir?: string // defaults to 'files'
   outDir?: string // defaults to root of project; './'
-  locals?: {[key: string]: any}
-  onComplete?: (variables: any, renderedFiles: FileToWrite[]) => void
+  locals?: {[id: string]: any}
+  onComplete?: (variables: {[id: string]: any}, renderedFiles: FileToWrite[]) => void
 }
 
 export
@@ -45,6 +57,6 @@ enum VariableType {
 
 export
 interface TemplateVariable {
-	identifier: string
+	config: TemplateConfigVariable
   vartype: VariableType
 }

@@ -38,7 +38,13 @@ function ParseTemplate(cwd: string, templateName: string): M.Template {
       }
     })
   
-  const templateVarIdsSet = new C.Set<string>()
+  const configVarDictionary = new C.Dictionary<string, M.TemplateConfigVariable>()
+
+  template_config
+    .variables
+    .forEach(config => {
+			return configVarDictionary.setValue(config.id, config)
+    })
 
 	const filenameVars = templates
     .map(({filename}) => filename.match(PATH_RE))
@@ -48,19 +54,14 @@ function ParseTemplate(cwd: string, templateName: string): M.Template {
   basenameVars.concat(filenameVars)
   	.reduce(flatten, []).filter(a => a != null)
     .map(p => PATH_REl.exec(p)[1])
-    // Add to set (removing duplicates)
-    .forEach(id => templateVarIdsSet.add(id))
+    // Add to dictionary if not present
+    .filter(id => !configVarDictionary.containsKey(id))
+    .forEach(id => configVarDictionary.setValue(id, { id: id }))
 
-  template_config
-    .variables
-    .forEach(id => {
-			return templateVarIdsSet.add(id)
-    })
-
-
-	// Get path variables
-	const templateVars: M.TemplateVariable[] = templateVarIdsSet.toArray()
-  	.map(helpers.createTemplateVariableFromIdentifier)
+	const templateVars: M.TemplateVariable[] =
+  	configVarDictionary
+      .values() // no duplicates configs
+      .map(helpers.createTemplateVariableFromTemplateConfigVariable)
 
   return <M.Template> {
     baseDir: templateDir,

@@ -10,7 +10,8 @@ const PATH_RE = /\{\s*([\$\w]+)\s*\}/g
 export
 function RenderTemplate (template: M.Template, vars: any, options = {}): M.FileToWrite[] {
 	const undefinedVars = template.vars
-    .map(({identifier}) => vars[identifier] ? null : identifier)
+    // This destructuring is a little ridiculous, but hey, live it up.
+    .map(({config: {id}}) => vars[id] ? null : id)
     .filter(a => a != null)
 
 	if (undefinedVars.length > 0) throw "Undefined variables in options: " + undefinedVars.join(', ')
