@@ -120,7 +120,7 @@ function parseValueForTemplateVar(opts: { cwd: string }) {
 import inquirer = require('inquirer')
 
 export
-function createQuestionFromTemplateVar(template, opts: {cwd: string}) {
+function createQuestionFromTemplateVar(template, opts: {cwd: string, vars}) {
   return <(t: M.TemplateVariable) => inquirer.Question>
   function (tv) {
     let res: inquirer.Question = {
@@ -134,7 +134,15 @@ function createQuestionFromTemplateVar(template, opts: {cwd: string}) {
 			description = `\n${ chalk.reset(tv.config.description) }\n`
     }
 
-    let displayName = tv.config.name || tv.config.id
+    // add default if defined
+    if (typeof tv.config.default === 'function') {
+    	res.default = (answers) => {
+        let vars = Object.assign({}, opts.vars, answers)
+        return tv.config.default(vars)
+      }
+  	}
+
+    let displayName = chalk.yellow(tv.config.name || tv.config.id)
     switch(tv.vartype) {
       case M.VariableType.array:
       	res.message = `Define ${displayName}. ${description}Enter strings separated by commas.\nEx: "a1,b#, m" => ["a1", "b#", " m"]\n`

@@ -54,10 +54,24 @@ async function GenCommand(args: Args) {
   const undefinedIds = template.vars
   	.filter(v => definedIds.indexOf(v.config.id) === -1)
 
-  console.log("Undefined variables:", undefinedIds.map(v => v.config.id).join(', '))
+  console.log("Undefined variables:", undefinedIds.map(v => v.config.name || v.config.id).join(', '))
 
+	const question_vars = {}
+  vars_from_cli.forEach(v => question_vars[v.key] = v.value)
 	const questions: inquirer.Question[] =
-  	undefinedIds.map(helpers.createQuestionFromTemplateVar(template, {cwd}))
+  	undefinedIds.map(helpers.createQuestionFromTemplateVar(template, {cwd, vars: question_vars}))
+
+
+	/*
+  const answersPromise = <Promise<inquirer.Answers> & {ui: any}> inquirer.prompt(questions)
+  // This is the way we can access the answers objectof a prompt,
+  // it was very difficult to figure out, so I'm keeping this around
+  // here for documentation purposes, in case we need it for filter,
+  // or other Inquirer js Question functions.
+  const answersToPopulate = answersPromise.ui.answers
+  vars_from_cli.forEach(({key, value}) => answersToPopulate[key] = value)
+  const message = util.inspect(answersPromise.ui, true, 2, true)
+  */
 
   const answers = await inquirer.prompt(questions)
 
@@ -89,7 +103,7 @@ async function GenCommand(args: Args) {
   	.concat(vars_from_answers)
   	.forEach(({key, value}) => complete_vars[key] = value)
   
-  debug("Rendering Template!")
+  debug("Rendering Template!\n", complete_vars)
 	
     ///////////////////////////
 	 // 2. RENDERING TEMPLATE //
