@@ -19,9 +19,26 @@ interface UndergenConfig {
   templatesDir?: string // defaults to 'templates'
 }
 
+type variable = {
+  // id used by template files and vars object
+  name: string,
+
+  // description used to further explain the variable's purpose.
+  description?: string,
+
+  // specify a default value for this variable, based on previous variable entries
+  // Ex:
+  // ...
+  // variables: [
+  //   { name: 'componentName' },
+  //   { name: 'fileName', default: ({componentName}) => componentName.toLowerCase() }
+  // ]
+  default?: (vars: {[name: string]: value}) => any
+}
+
 module.exports = {
 	// Variables which need to be defined for template
-  variables?: string[]
+  variables?: (string | variable) []
 
 	// files directory relative to this file
   // The files directory is a mirrored representation of these templates

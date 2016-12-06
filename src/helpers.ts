@@ -4,9 +4,9 @@ import * as M from './models'
 export
 function createTemplateVariableFromTemplateConfigVariable(config: M.TemplateConfigVariable): M.TemplateVariable {
   // Crate types for the variables based on their matched suffix
-  if (/dir$/i.test(config.id))              return { config, vartype: M.VariableType.directory }
-  else if (/arr$/i.test(config.id))         return { config, vartype: M.VariableType.array }
-  else if (/num$|count$/i.test(config.id))  return { config, vartype: M.VariableType.number }
+  if (/dir$/i.test(config.name))              return { config, vartype: M.VariableType.directory }
+  else if (/arr$/i.test(config.name))         return { config, vartype: M.VariableType.array }
+  else if (/num$|count$/i.test(config.name))  return { config, vartype: M.VariableType.number }
   else                               				return { config, vartype: M.VariableType.string }
 }
 
@@ -58,7 +58,7 @@ function readTemplateConfig(cwd, templateDir: string, config: M.UndergenConfig):
   	template_config.variables
     .map(variable =>
     	typeof variable === 'string'
-      ? <M.TemplateConfigVariable> { id: variable }
+      ? <M.TemplateConfigVariable> { name: variable }
       : variable
     )
 
@@ -105,7 +105,7 @@ function parseValueForTemplateVar(opts: { cwd: string }) {
       case M.VariableType.directory:
         res = path.resolve(opts.cwd, value)
         if (!fs.existsSync(res)) {
-          throw `Directory does not exist: ${templateVar.config.id} = "${value}" when resolved to "${res}"`
+          throw `Directory does not exist: ${templateVar.config.name} = "${value}" when resolved to "${res}"`
         }
         break
       case M.VariableType.number:
@@ -124,7 +124,7 @@ function createQuestionFromTemplateVar(template, opts: {cwd: string, vars}) {
   return <(t: M.TemplateVariable) => inquirer.Question>
   function (tv) {
     let res: inquirer.Question = {
-      name: 'templateVar:' + tv.config.id
+      name: 'templateVar:' + tv.config.name
     }
 
 		let description = ''
@@ -142,7 +142,7 @@ function createQuestionFromTemplateVar(template, opts: {cwd: string, vars}) {
       }
   	}
 
-    let displayName = chalk.yellow(tv.config.name || tv.config.id)
+    let displayName = chalk.yellow(tv.config.name)
     switch(tv.vartype) {
       case M.VariableType.array:
       	res.message = `Define ${displayName}. ${description}Enter strings separated by commas.\nEx: "a1,b#, m" => ["a1", "b#", " m"]\n`
@@ -184,15 +184,15 @@ export
 function createKeyValuePairsFromArgument(template: M.Template, {cwd}) {
   const parseTemplateVarValue = parseValueForTemplateVar({cwd})
   return (arg) => {
-    const [id, value] = arg.split(/:/)
+    const [name, value] = arg.split(/:/)
 
-    const templateVariable = template.vars.find(v => v.config.id === id)
+    const templateVariable = template.vars.find(v => v.config.name === name)
 		if (templateVariable == null) {
-      throw new Error(`Unknown template variable argument ID: ${id}`)
+      throw new Error(`Unknown template variable argument name: ${name}`)
     }
 
     return {
-      key: templateVariable.config.id,
+      key: templateVariable.config.name,
       value: parseTemplateVarValue(templateVariable, value)
     }
   }

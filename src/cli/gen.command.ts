@@ -52,9 +52,9 @@ async function GenCommand(args: Args) {
   const definedIds = vars_from_cli.map(({key}) => key)
 
   const undefinedIds = template.vars
-  	.filter(v => definedIds.indexOf(v.config.id) === -1)
+  	.filter(v => definedIds.indexOf(v.config.name) === -1)
 
-  console.log("Undefined variables:", undefinedIds.map(v => v.config.name || v.config.id).join(', '))
+  console.log("Undefined variables:", undefinedIds.map(v => v.config.name).join(', '))
 
 	const question_vars = {}
   vars_from_cli.forEach(v => question_vars[v.key] = v.value)

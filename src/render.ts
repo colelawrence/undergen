@@ -11,7 +11,7 @@ export
 function RenderTemplate (template: M.Template, vars: any, options = {}): M.FileToWrite[] {
 	const undefinedVars = template.vars
     // This destructuring is a little ridiculous, but hey, live it up.
-    .map(({config: {id}}) => vars[id] ? null : id)
+    .map(({config: {name}}) => vars[name] ? null : name)
     .filter(a => a != null)
 
 	if (undefinedVars.length > 0) throw "Undefined variables in options: " + undefinedVars.join(', ')
@@ -45,13 +45,13 @@ function renderFile (file: M.FileTemplate, vars: {[identifier: string]: any}, te
     return <M.FileToWrite> {
       baseDir: file.baseDir
         // use variables in path
-        .replace(PATH_RE, (_match, id) => vars[id] ),
+        .replace(PATH_RE, (_match, name) => vars[name] ),
 
       filename: file.filename
         // remove ejs extension if present
         .replace(/\.ejs$/, '')
         // use variables in path
-        .replace(PATH_RE, (_match, id) => vars[id] ),
+        .replace(PATH_RE, (_match, name) => vars[name] ),
 
       contents: renderedContents
     }

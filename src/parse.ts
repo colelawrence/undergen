@@ -43,7 +43,7 @@ function ParseTemplate(cwd: string, templateName: string): M.Template {
   template_config
     .variables
     .forEach(config => {
-			return configVarDictionary.setValue(config.id, config)
+			return configVarDictionary.setValue(config.name, config)
     })
 
 	const filenameVars = templates
@@ -55,8 +55,8 @@ function ParseTemplate(cwd: string, templateName: string): M.Template {
   	.reduce(flatten, []).filter(a => a != null)
     .map(p => PATH_REl.exec(p)[1])
     // Add to dictionary if not present
-    .filter(id => !configVarDictionary.containsKey(id))
-    .forEach(id => configVarDictionary.setValue(id, { id: id }))
+    .filter(vid => !configVarDictionary.containsKey(vid))
+    .forEach(vid => configVarDictionary.setValue(vid, { name: vid }))
 
 	const templateVars: M.TemplateVariable[] =
   	configVarDictionary
