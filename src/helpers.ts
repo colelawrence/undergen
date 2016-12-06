@@ -120,39 +120,41 @@ function parseValueForTemplateVar(opts: { cwd: string }) {
 import inquirer = require('inquirer')
 
 export
-function createQuestionFromTemplateVar(opts: {cwd: string, template: M.Template}) {
+function createQuestionFromTemplateVar(template, opts: {cwd: string}) {
   return <(t: M.TemplateVariable) => inquirer.Question>
   function (tv) {
     let res: inquirer.Question = {
       name: 'templateVar:' + tv.config.id
     }
 
+		let description = ''
+
+    // add description for the variable to the message
+    if (tv.config.description) {
+			description = `\n${ chalk.reset(tv.config.description) }\n`
+    }
+
     let displayName = tv.config.name || tv.config.id
     switch(tv.vartype) {
       case M.VariableType.array:
-      	res.message = `Define ${displayName}. Enter strings separated by commas.\nEx: "hello,goodbye, m" => ["hello", "goodbye", " m"]\n`
+      	res.message = `Define ${displayName}. ${description}Enter strings separated by commas.\nEx: "a1,b#, m" => ["a1", "b#", " m"]\n`
         res.type = 'string'
         break
       case M.VariableType.directory:
-      	res.message = `Define ${displayName}.`
+      	res.message = `Define ${displayName}. ${description}`
         // We need to add basePath for inquirer-directory module
         ;(<any> res).basePath = opts.cwd
-        ;(<any> res).startPath = opts.template.outDir || opts.cwd
+        ;(<any> res).startPath = template.outDir || opts.cwd
         ;(<any> res).cwd = opts.cwd
         res.type = 'directory'
         break
       case M.VariableType.number:
-      	res.message = `Define ${displayName}. Enter number:`
+      	res.message = `Define ${displayName}. ${description}Enter number:`
         res.validate = (input) => isNaN(parseFloat(input)) ? `Unable to parse not a number "${input}".` : true
         break
       case M.VariableType.string:
-      	res.message = `Define ${displayName}. Enter string:`
+      	res.message = `Define ${displayName}. ${description}Enter string:`
 				break
-    }
-
-    // add description for the variable to the message
-    if (tv.config.description) {
-			res.message += `\n${ chalk.reset(tv.config.description) }`
     }
 
     return res
@@ -163,7 +165,7 @@ export
 /**
  * This function generates a function for parsing an argument formatted string ("identifier:value")
  * So, example:
- * 		const fn = createKeyValuePairsFromArgument({cwd})
+ * 		const fn = createKeyValuePairsFromArgument(template, {cwd})
  * 		fn(`f:1`) //=> {key: 'f', value: '1'}
  * 		fn(`fCount:1`) //=> {key: 'fCount', value: 1}
  * 		fn(`aArr:1`) //=> {key: 'aArr', value: ["1"]}

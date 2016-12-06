@@ -57,7 +57,7 @@ async function GenCommand(args: Args) {
   console.log("Undefined variables:", undefinedIds.map(v => v.config.id).join(', '))
 
 	const questions: inquirer.Question[] =
-  	undefinedIds.map(helpers.createQuestionFromTemplateVar({cwd, template}))
+  	undefinedIds.map(helpers.createQuestionFromTemplateVar(template, {cwd}))
 
   const answers = await inquirer.prompt(questions)
 
