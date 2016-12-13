@@ -1,6 +1,6 @@
 {
   "name": "undergen",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Workspace code generator using highly flexible JavaScript configuration and ejs template renderer.",
   "scripts": {
     "test": "mocha ./test/*Test.ts --require ts-node/register",
