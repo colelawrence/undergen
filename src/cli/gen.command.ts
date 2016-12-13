@@ -150,7 +150,7 @@ async function GenCommand(args: Args) {
 	console.log(chalk.bold.green(`Generated ${filePathsToWrite.length} files 😎`))
 	console.log(
     filePathsToWrite
-      .map(fp => ' * ' + path.relative(cwd, fp))
+      .map(fp => ' * ' + chalk.green(path.relative(cwd, fp)))
       .join('\n')
   )
 
@@ -161,6 +161,7 @@ async function GenCommand(args: Args) {
 function getOnComplete(cwd, templateName){
 	const config = helpers.readUndergenConfig(cwd)
   const templateDir = path.resolve(cwd, config.templatesDir, templateName)
+  // onComplete is set to noop if it == null
   const template_config = helpers.readTemplateConfig(cwd, templateDir, config)
   return template_config.onComplete
 }
