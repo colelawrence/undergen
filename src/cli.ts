@@ -9,6 +9,10 @@ const booleanArgs = ValidArgs
 import { GenCommand } from './cli/commands'
 
 import parseArgs = require('minimist')
+
+// either 'under' or 'undergen'
+const binCmd = filename(process.argv[1])
+
 const parsedArgs = <Args> parseArgs(process.argv.slice(2), { boolean: booleanArgs })
 
 // helper function returns bool if string looks like bool
@@ -31,11 +35,25 @@ if (invalidArgs.length > 0) {
 
 } else {
 
-  const [cmd, ...args] = parsedArgs._
+	switch (binCmd) {
+		case 'under':
+      const [cmd, ...args] = parsedArgs._
 
-  parsedArgs._ = args
-  switch (cmd) {
-    case "gen": GenCommand(parsedArgs).catch((error) => console.error(error)); break
-    default: console.error("Unknown command, " + cmd)
+      parsedArgs._ = args
+      switch (cmd) {
+        case "gen": GenCommand(parsedArgs).catch((error) => console.error(error)); break
+        default: console.error("Unknown command, " + cmd)
+      }
+      break
+
+    // I had to add this command, I love typing out `undergen` and not `under gen`,
+    // less confusing as the package name is undergen as well.
+    case 'undergen':
+    	GenCommand(parsedArgs).catch((error) => console.error(error)); break
+    default: console.error("Unknown command, " + binCmd)
   }
+}
+
+function filename(filepath) {
+  return filepath.match(/[^\\\/]+$/)[0].toLowerCase()
 }

@@ -15,7 +15,8 @@
     "test-cli-0:watch": "nodemon -e ts,ejs -w src -x \"npm run test-cli-0 --silent\""
   },
   "bin": {
-    "under": "./dist/cli.js"
+    "under": "./dist/cli.js",
+    "undergen": "./dist/cli.js"
   },
   "engines": {
     "node": ">=6"

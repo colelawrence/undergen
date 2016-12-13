@@ -56,10 +56,13 @@ async function GenCommand(args: Args) {
 
   console.log("Undefined variables:", undefinedIds.map(v => v.config.name).join(', '))
 
+	// This prefix prevents conflicts between application specific questions and template variables
+	const noConflictPrefix = 'templateVar:'
+
 	const question_vars = {}
   vars_from_cli.forEach(v => question_vars[v.key] = v.value)
 	const questions: inquirer.Question[] =
-  	undefinedIds.map(helpers.createQuestionFromTemplateVar(template, {cwd, vars: question_vars}))
+  	undefinedIds.map(helpers.createQuestionFromTemplateVar(template, {cwd, vars: question_vars, prefix: noConflictPrefix}))
 
 
 	/*
@@ -75,16 +78,17 @@ async function GenCommand(args: Args) {
 
   const answers = await inquirer.prompt(questions)
 
+	const VAR_DIR_RE = new RegExp(`^${noConflictPrefix}.*Dir$`)
+	const VAR_RE = new RegExp(`^${noConflictPrefix}(.*)$`)
+
 	// Resolve directory answers to absolute paths!
 	Object.keys(answers)
   	// take only templateVars that are directories
-  	.filter(k => /^templateVar:.*Dir$/.test(k))
+  	.filter(k => VAR_DIR_RE.test(k))
   	// and resolve to absolute paths
   	.forEach(k => {
       answers[k] = path.resolve(cwd, answers[k])
     })
-  
-  const VAR_RE = /^templateVar:(.+)$/
 
   // convert in vars from answers into {key, value} pairs
 	const vars_from_answers = Object.keys(answers)

@@ -120,11 +120,11 @@ function parseValueForTemplateVar(opts: { cwd: string }) {
 import inquirer = require('inquirer')
 
 export
-function createQuestionFromTemplateVar(template, opts: {cwd: string, vars}) {
+function createQuestionFromTemplateVar(template, opts: {cwd: string, vars, prefix: string}) {
   return <(t: M.TemplateVariable) => inquirer.Question>
   function (tv) {
     let res: inquirer.Question = {
-      name: 'templateVar:' + tv.config.name
+      name: opts.prefix + tv.config.name
     }
 
 		let description = ''
@@ -137,7 +137,16 @@ function createQuestionFromTemplateVar(template, opts: {cwd: string, vars}) {
     // add default if defined
     if (typeof tv.config.default === 'function') {
     	res.default = (answers) => {
-        let vars = Object.assign({}, opts.vars, answers)
+        let vars = Object.assign({}, opts.vars)
+
+        // populate with expected keys
+        Object.keys(answers)
+        	.forEach(k => {
+            // remove prefix from keys when passing down to default function
+            const plainKey = k.replace(opts.prefix, '')
+            vars[plainKey] = answers[k]
+          })
+
         return tv.config.default(vars)
       }
   	}
